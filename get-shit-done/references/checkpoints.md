@@ -197,8 +197,8 @@ Plans execute autonomously. Checkpoints formalize interaction points where human
 **Do NOT use for pre-planned manual work:**
 - Deploying (use CLI - auth gate if needed)
 - Creating webhooks/databases (use API/CLI - auth gate if needed)
-- Running builds/tests (use Bash tool)
-- Creating files (use Write tool)
+- Running builds/tests (use exec_command tool)
+- Creating files (use apply_patch tool)
 
 **Structure:**
 ```xml
@@ -516,7 +516,7 @@ timeout 30 bash -c 'until curl -s localhost:3000 > /dev/null 2>&1; do sleep 1; d
 |--------|--------------|-----------------|
 | Deploy to Vercel | Yes (`vercel`) | YES |
 | Create Stripe webhook | Yes (API) | YES |
-| Write .env file | Yes (Write tool) | YES |
+| Write .env file | Yes (apply_patch tool) | YES |
 | Create Upstash DB | Yes (`upstash`) | YES |
 | Run tests | Yes (`npm test`) | YES |
 | Start dev server | Yes (`npm run dev`) | YES |

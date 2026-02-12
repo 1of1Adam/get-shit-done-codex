@@ -4,13 +4,13 @@ description: Create detailed execution plan for a phase (PLAN.md) with verificat
 argument-hint: "[phase] [--research] [--skip-research] [--gaps] [--skip-verify]"
 agent: gsd-planner
 allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Glob
-  - Grep
-  - Task
-  - WebFetch
+  - read_file
+  - apply_patch
+  - exec_command
+  - list_dir
+  - grep_files
+  - spawn_agent
+  - web_fetch
   - mcp__context7__*
 ---
 <objective>
@@ -22,8 +22,8 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/plan-phase.md
-@~/.claude/get-shit-done/references/ui-brand.md
+@~/.codex/get-shit-done/workflows/plan-phase.md
+@~/.codex/get-shit-done/references/ui-brand.md
 </execution_context>
 
 <context>
@@ -39,6 +39,6 @@ Normalize phase input in step 2 before any directory lookups.
 </context>
 
 <process>
-Execute the plan-phase workflow from @~/.claude/get-shit-done/workflows/plan-phase.md end-to-end.
+Execute the plan-phase workflow from @~/.codex/get-shit-done/workflows/plan-phase.md end-to-end.
 Preserve all workflow gates (validation, research, planning, verification loop, routing).
 </process>

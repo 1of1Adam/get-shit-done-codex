@@ -3,10 +3,10 @@ name: gsd:debug
 description: Systematic debugging with persistent state across context resets
 argument-hint: [issue description]
 allowed-tools:
-  - Read
-  - Bash
-  - Task
-  - AskUserQuestion
+  - read_file
+  - exec_command
+  - spawn_agent
+  - request_user_input
 ---
 
 <objective>
@@ -31,12 +31,12 @@ ls .planning/debug/*.md 2>/dev/null | grep -v resolved | head -5
 ## 0. Initialize Context
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js state load)
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js state load)
 ```
 
 Extract `commit_docs` from init JSON. Resolve debugger model:
 ```bash
-DEBUGGER_MODEL=$(node ~/.claude/get-shit-done/bin/gsd-tools.js resolve-model gsd-debugger --raw)
+DEBUGGER_MODEL=$(node ~/.codex/get-shit-done/bin$gsd-tools.js resolve-model gsd-debugger --raw)
 ```
 
 ## 1. Check Active Sessions
@@ -50,7 +50,7 @@ If $ARGUMENTS provided OR user describes new issue:
 
 ## 2. Gather Symptoms (if new issue)
 
-Use AskUserQuestion for each:
+Use request_user_input for each:
 
 1. **Expected behavior** - What should happen?
 2. **Actual behavior** - What happens instead?
@@ -90,9 +90,9 @@ Create: .planning/debug/{slug}.md
 ```
 
 ```
-Task(
-  prompt=filled_prompt,
-  subagent_type="gsd-debugger",
+spawn_agent(
+  instructions=filled_prompt,
+  agent_name="gsd-debugger",
   model="{debugger_model}",
   description="Debug {slug}"
 )
@@ -104,7 +104,7 @@ Task(
 - Display root cause and evidence summary
 - Offer options:
   - "Fix now" - spawn fix subagent
-  - "Plan fix" - suggest /gsd:plan-phase --gaps
+  - "Plan fix" - suggest $gsd-plan-phase --gaps
   - "Manual fix" - done
 
 **If `## CHECKPOINT REACHED`:**
@@ -143,9 +143,9 @@ goal: find_and_fix
 ```
 
 ```
-Task(
-  prompt=continuation_prompt,
-  subagent_type="gsd-debugger",
+spawn_agent(
+  instructions=continuation_prompt,
+  agent_name="gsd-debugger",
   model="{debugger_model}",
   description="Continue debug {slug}"
 )

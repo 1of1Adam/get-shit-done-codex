@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Claude Code Statusline - GSD Edition
+// Codex CLI Statusline - GSD Edition
 // Shows: model | current task | directory | context usage
 
 const fs = require('fs');
@@ -46,7 +46,7 @@ process.stdin.on('end', () => {
     // Current task from todos
     let task = '';
     const homeDir = os.homedir();
-    const todosDir = path.join(homeDir, '.claude', 'todos');
+    const todosDir = path.join(homeDir, '.codex', 'todos');
     if (session && fs.existsSync(todosDir)) {
       try {
         const files = fs.readdirSync(todosDir)
@@ -68,12 +68,12 @@ process.stdin.on('end', () => {
 
     // GSD update available?
     let gsdUpdate = '';
-    const cacheFile = path.join(homeDir, '.claude', 'cache', 'gsd-update-check.json');
+    const cacheFile = path.join(homeDir, '.codex', 'cache', 'gsd-update-check.json');
     if (fs.existsSync(cacheFile)) {
       try {
         const cache = JSON.parse(fs.readFileSync(cacheFile, 'utf8'));
         if (cache.update_available) {
-          gsdUpdate = '\x1b[33m⬆ /gsd:update\x1b[0m │ ';
+          gsdUpdate = '\x1b[33m⬆ $gsd-update\x1b[0m │ ';
         }
       } catch (e) {}
     }

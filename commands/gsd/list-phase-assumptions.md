@@ -3,10 +3,10 @@ name: gsd:list-phase-assumptions
 description: Surface Claude's assumptions about a phase approach before planning
 argument-hint: "[phase]"
 allowed-tools:
-  - Read
-  - Bash
-  - Grep
-  - Glob
+  - read_file
+  - exec_command
+  - grep_files
+  - list_dir
 ---
 
 <objective>
@@ -17,7 +17,7 @@ Output: Conversational output only (no file creation) - ends with "What do you t
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/list-phase-assumptions.md
+@~/.codex/get-shit-done/workflows/list-phase-assumptions.md
 </execution_context>
 
 <context>

@@ -3,10 +3,10 @@ name: gsd:remove-phase
 description: Remove a future phase from roadmap and renumber subsequent phases
 argument-hint: <phase-number>
 allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Glob
+  - read_file
+  - apply_patch
+  - exec_command
+  - list_dir
 ---
 <objective>
 Remove an unstarted future phase from the roadmap and renumber all subsequent phases to maintain a clean, linear sequence.
@@ -16,7 +16,7 @@ Output: Phase deleted, all subsequent phases renumbered, git commit as historica
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/remove-phase.md
+@~/.codex/get-shit-done/workflows/remove-phase.md
 </execution_context>
 
 <context>
@@ -27,6 +27,6 @@ Phase: $ARGUMENTS
 </context>
 
 <process>
-Execute the remove-phase workflow from @~/.claude/get-shit-done/workflows/remove-phase.md end-to-end.
+Execute the remove-phase workflow from @~/.codex/get-shit-done/workflows/remove-phase.md end-to-end.
 Preserve all validation gates (future phase check, work check), renumbering logic, and commit.
 </process>

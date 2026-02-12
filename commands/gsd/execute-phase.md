@@ -3,15 +3,14 @@ name: gsd:execute-phase
 description: Execute all plans in a phase with wave-based parallelization
 argument-hint: "<phase-number> [--gaps-only]"
 allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - Task
-  - TodoWrite
-  - AskUserQuestion
+  - read_file
+  - apply_patch
+  - list_dir
+  - grep_files
+  - exec_command
+  - spawn_agent
+  - update_plan
+  - request_user_input
 ---
 <objective>
 Execute all plans in a phase using wave-based parallel execution.
@@ -22,8 +21,8 @@ Context budget: ~15% orchestrator, 100% fresh per subagent.
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/execute-phase.md
-@~/.claude/get-shit-done/references/ui-brand.md
+@~/.codex/get-shit-done/workflows/execute-phase.md
+@~/.codex/get-shit-done/references/ui-brand.md
 </execution_context>
 
 <context>
@@ -37,6 +36,6 @@ Phase: $ARGUMENTS
 </context>
 
 <process>
-Execute the execute-phase workflow from @~/.claude/get-shit-done/workflows/execute-phase.md end-to-end.
+Execute the execute-phase workflow from @~/.codex/get-shit-done/workflows/execute-phase.md end-to-end.
 Preserve all workflow gates (wave execution, checkpoint handling, verification, state updates, routing).
 </process>

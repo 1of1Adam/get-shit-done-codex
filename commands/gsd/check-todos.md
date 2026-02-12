@@ -3,10 +3,10 @@ name: gsd:check-todos
 description: List pending todos and select one to work on
 argument-hint: [area filter]
 allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - AskUserQuestion
+  - read_file
+  - apply_patch
+  - exec_command
+  - request_user_input
 ---
 
 <objective>
@@ -23,11 +23,11 @@ Routes to the check-todos workflow which handles:
 <execution_context>
 @.planning/STATE.md
 @.planning/ROADMAP.md
-@~/.claude/get-shit-done/workflows/check-todos.md
+@~/.codex/get-shit-done/workflows/check-todos.md
 </execution_context>
 
 <process>
-**Follow the check-todos workflow** from `@~/.claude/get-shit-done/workflows/check-todos.md`.
+**Follow the check-todos workflow** from `@~/.codex/get-shit-done/workflows/check-todos.md`.
 
 The workflow handles all logic including:
 1. Todo existence checking

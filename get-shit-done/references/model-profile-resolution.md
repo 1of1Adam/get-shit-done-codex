@@ -12,14 +12,14 @@ Default: `balanced` if not set or config missing.
 
 ## Lookup Table
 
-@~/.claude/get-shit-done/references/model-profiles.md
+@~/.codex/get-shit-done/references/model-profiles.md
 
-Look up the agent in the table for the resolved profile. Pass the model parameter to Task calls:
+Look up the agent in the table for the resolved profile. Pass the model parameter to spawn_agent calls:
 
 ```
-Task(
-  prompt="...",
-  subagent_type="gsd-planner",
+spawn_agent(
+  instructions="...",
+  agent_name="gsd-planner",
   model="{resolved_model}"  # e.g., "opus" for quality profile
 )
 ```
@@ -29,4 +29,4 @@ Task(
 1. Resolve once at orchestration start
 2. Store the profile value
 3. Look up each agent's model from the table when spawning
-4. Pass model parameter to each Task call
+4. Pass model parameter to each spawn_agent call

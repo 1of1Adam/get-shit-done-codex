@@ -111,7 +111,7 @@ Phase: "API documentation"
 Phase number from argument (required).
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "${PHASE}")
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init phase-op "${PHASE}")
 ```
 
 Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `has_verification`, `plan_count`, `roadmap_exists`, `planning_exists`.
@@ -120,7 +120,7 @@ Parse JSON for: `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phas
 ```
 Phase [X] not found in roadmap.
 
-Use /gsd:progress to see available phases.
+Use $gsd-progress to see available phases.
 ```
 Exit workflow.
 
@@ -135,7 +135,7 @@ ls ${phase_dir}/*-CONTEXT.md 2>/dev/null
 ```
 
 **If exists:**
-Use AskUserQuestion:
+Use request_user_input:
 - header: "Existing context"
 - question: "Phase [X] already has context. What do you want to do?"
 - options:
@@ -187,7 +187,7 @@ We'll clarify HOW to implement this.
 (New capabilities belong in other phases.)
 ```
 
-**Then use AskUserQuestion (multiSelect: true):**
+**Then use request_user_input (multiSelect: true):**
 - header: "Discuss"
 - question: "Which areas do you want to discuss for [phase name]?"
 - options: Generate 3-4 phase-specific gray areas, each formatted as:
@@ -239,10 +239,10 @@ Ask 4 questions per area before offering to continue or move on. Each answer oft
    Let's talk about [Area].
    ```
 
-2. **Ask 4 questions using AskUserQuestion:**
+2. **Ask 4 questions using request_user_input:**
    - header: "[Area]"
    - question: Specific decision for this area
-   - options: 2-3 concrete choices (AskUserQuestion adds "Other" automatically)
+   - options: 2-3 concrete choices (request_user_input adds "Other" automatically)
    - Include "You decide" as an option when reasonable — captures Claude discretion
 
 3. **After 4 questions, check:**
@@ -370,14 +370,14 @@ Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 
 **Phase ${PHASE}: [Name]** — [Goal from ROADMAP.md]
 
-`/gsd:plan-phase ${PHASE}`
+`$gsd-plan-phase ${PHASE}`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- `/gsd:plan-phase ${PHASE} --skip-research` — plan without research
+- `$gsd-plan-phase ${PHASE} --skip-research` — plan without research
 - Review/edit CONTEXT.md before continuing
 
 ---
@@ -388,7 +388,7 @@ Created: .planning/phases/${PADDED_PHASE}-${SLUG}/${PADDED_PHASE}-CONTEXT.md
 Commit phase context (uses `commit_docs` from init internally):
 
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
+node ~/.codex/get-shit-done/bin$gsd-tools.js commit "docs(${padded_phase}): capture phase context" --files "${phase_dir}/${padded_phase}-CONTEXT.md"
 ```
 
 Confirm: "Committed: docs(${padded_phase}): capture phase context"

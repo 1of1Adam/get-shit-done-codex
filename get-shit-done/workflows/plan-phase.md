@@ -5,7 +5,7 @@ Create executable phase prompts (PLAN.md files) for a roadmap phase with integra
 <required_reading>
 Read all files referenced by the invoking prompt's execution_context before starting.
 
-@~/.claude/get-shit-done/references/ui-brand.md
+@~/.codex/get-shit-done/references/ui-brand.md
 </required_reading>
 
 <process>
@@ -15,14 +15,14 @@ Read all files referenced by the invoking prompt's execution_context before star
 Load all context in one call (include file contents to avoid redundant reads):
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init plan-phase "$PHASE" --include state,roadmap,requirements,context,research,verification,uat)
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init plan-phase "$PHASE" --include state,roadmap,requirements,context,research,verification,uat)
 ```
 
 Parse JSON for: `researcher_model`, `planner_model`, `checker_model`, `research_enabled`, `plan_checker_enabled`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `phase_slug`, `padded_phase`, `has_research`, `has_context`, `has_plans`, `plan_count`, `planning_exists`, `roadmap_exists`.
 
 **File contents (from --include):** `state_content`, `roadmap_content`, `requirements_content`, `context_content`, `research_content`, `verification_content`, `uat_content`. These are null if files don't exist.
 
-**If `planning_exists` is false:** Error — run `/gsd:new-project` first.
+**If `planning_exists` is false:** Error — run `$gsd-new-project` first.
 
 ## 2. Parse and Normalize Arguments
 
@@ -40,7 +40,7 @@ mkdir -p ".planning/phases/${padded_phase}-${phase_slug}"
 ## 3. Validate Phase
 
 ```bash
-PHASE_INFO=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${PHASE}")
+PHASE_INFO=$(node ~/.codex/get-shit-done/bin$gsd-tools.js roadmap get-phase "${PHASE}")
 ```
 
 **If `found` is false:** Error with available phases. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -73,10 +73,10 @@ Display banner:
 ### Spawn gsd-phase-researcher
 
 ```bash
-PHASE_DESC=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${PHASE}" | jq -r '.section')
+PHASE_DESC=$(node ~/.codex/get-shit-done/bin$gsd-tools.js roadmap get-phase "${PHASE}" | jq -r '.section')
 # Use requirements_content from INIT (already loaded via --include requirements)
 REQUIREMENTS=$(echo "$INIT" | jq -r '.requirements_content // empty' | grep -A100 "## Requirements" | head -50)
-STATE_SNAP=$(node ~/.claude/get-shit-done/bin/gsd-tools.js state-snapshot)
+STATE_SNAP=$(node ~/.codex/get-shit-done/bin$gsd-tools.js state-snapshot)
 # Extract decisions from state-snapshot JSON: jq '.decisions[] | "\(.phase): \(.summary) - \(.rationale)"'
 ```
 
@@ -89,7 +89,7 @@ Answer: "What do I need to know to PLAN this phase well?"
 </objective>
 
 <phase_context>
-IMPORTANT: If CONTEXT.md exists below, it contains user decisions from /gsd:discuss-phase.
+IMPORTANT: If CONTEXT.md exists below, it contains user decisions from $gsd-discuss-phase.
 - **Decisions** = Locked — research THESE deeply, no alternatives
 - **Claude's Discretion** = Freedom areas — research options, recommend
 - **Deferred Ideas** = Out of scope — ignore
@@ -109,9 +109,9 @@ Write to: {phase_dir}/{phase}-RESEARCH.md
 ```
 
 ```
-Task(
-  prompt="First, read ~/.claude/agents/gsd-phase-researcher.md for your role and instructions.\n\n" + research_prompt,
-  subagent_type="general-purpose",
+spawn_agent(
+  instructions="First, read ~/.codex/agents$gsd-phase-researcher.agent.md for your role and instructions.\n\n" + research_prompt,
+  agent_name="default",
   model="{researcher_model}",
   description="Research Phase {phase}"
 )
@@ -132,7 +132,7 @@ ls "${PHASE_DIR}"/*-PLAN.md 2>/dev/null
 
 ## 7. Use Context Files from INIT
 
-All file contents are already loaded via `--include` in step 1 (`@` syntax doesn't work across Task() boundaries):
+All file contents are already loaded via `--include` in step 1 (`@` syntax doesn't work across spawn_agent() boundaries):
 
 ```bash
 # Extract from INIT JSON (no need to re-read files)
@@ -168,7 +168,7 @@ Planner prompt:
 **Requirements:** {requirements_content}
 
 **Phase Context:**
-IMPORTANT: If context exists below, it contains USER DECISIONS from /gsd:discuss-phase.
+IMPORTANT: If context exists below, it contains USER DECISIONS from $gsd-discuss-phase.
 - **Decisions** = LOCKED — honor exactly, do not revisit
 - **Claude's Discretion** = Freedom — make implementation choices
 - **Deferred Ideas** = Out of scope — do NOT include
@@ -180,7 +180,7 @@ IMPORTANT: If context exists below, it contains USER DECISIONS from /gsd:discuss
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase. Plans need:
+Output consumed by $gsd-execute-phase. Plans need:
 - Frontmatter (wave, depends_on, files_modified, autonomous)
 - Tasks in XML format
 - Verification criteria
@@ -198,9 +198,9 @@ Output consumed by /gsd:execute-phase. Plans need:
 ```
 
 ```
-Task(
-  prompt="First, read ~/.claude/agents/gsd-planner.md for your role and instructions.\n\n" + filled_prompt,
-  subagent_type="general-purpose",
+spawn_agent(
+  instructions="First, read ~/.codex/agents$gsd-planner.agent.md for your role and instructions.\n\n" + filled_prompt,
+  agent_name="default",
   model="{planner_model}",
   description="Plan Phase {phase}"
 )
@@ -253,9 +253,9 @@ IMPORTANT: Plans MUST honor user decisions. Flag as issue if plans contradict.
 ```
 
 ```
-Task(
-  prompt=checker_prompt,
-  subagent_type="gsd-plan-checker",
+spawn_agent(
+  instructions=checker_prompt,
+  agent_name="gsd-plan-checker",
   model="{checker_model}",
   description="Verify Phase {phase} plans"
 )
@@ -301,9 +301,9 @@ Return what changed.
 ```
 
 ```
-Task(
-  prompt="First, read ~/.claude/agents/gsd-planner.md for your role and instructions.\n\n" + revision_prompt,
-  subagent_type="general-purpose",
+spawn_agent(
+  instructions="First, read ~/.codex/agents$gsd-planner.agent.md for your role and instructions.\n\n" + revision_prompt,
+  agent_name="default",
   model="{planner_model}",
   description="Revise Phase {phase} plans"
 )
@@ -346,7 +346,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Execute Phase {X}** — run all {N} plans
 
-/gsd:execute-phase {X}
+$gsd-execute-phase {X}
 
 <sub>/clear first → fresh context window</sub>
 
@@ -354,7 +354,7 @@ Verification: {Passed | Passed with override | Skipped}
 
 **Also available:**
 - cat .planning/phases/{phase-dir}/*-PLAN.md — review plans
-- /gsd:plan-phase {X} --research — re-research first
+- $gsd-plan-phase {X} --research — re-research first
 
 ───────────────────────────────────────────────────────────────
 </offer_next>

@@ -1,6 +1,6 @@
 ---
 description: Reapply local modifications after a GSD update
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep, AskUserQuestion
+allowed-tools: read_file, apply_patch, apply_patch, exec_command, list_dir, grep_files, request_user_input
 ---
 
 <purpose>
@@ -15,10 +15,10 @@ Check for local patches directory:
 
 ```bash
 # Global install
-PATCHES_DIR="${HOME}/.claude/gsd-local-patches"
+PATCHES_DIR="${HOME}/.codex$gsd-local-patches"
 # Local install fallback
 if [ ! -d "$PATCHES_DIR" ]; then
-  PATCHES_DIR="./.claude/gsd-local-patches"
+  PATCHES_DIR="./.codex$gsd-local-patches"
 fi
 ```
 
@@ -28,7 +28,7 @@ Read `backup-meta.json` from the patches directory.
 ```
 No local patches found. Nothing to reapply.
 
-Local patches are automatically saved when you run /gsd:update
+Local patches are automatically saved when you run $gsd-update
 after modifying any GSD workflow, command, or agent files.
 ```
 Exit.
@@ -76,7 +76,7 @@ For each file in `backup-meta.json`:
 After reapplying, regenerate the file manifest so future updates correctly detect these as user modifications:
 
 ```bash
-# The manifest will be regenerated on next /gsd:update
+# The manifest will be regenerated on next $gsd-update
 # For now, just note which files were modified
 ```
 

@@ -1,17 +1,17 @@
 ---
 name: gsd:research-phase
-description: Research how to implement a phase (standalone - usually use /gsd:plan-phase instead)
+description: Research how to implement a phase (standalone - usually use $gsd-plan-phase instead)
 argument-hint: "[phase]"
 allowed-tools:
-  - Read
-  - Bash
-  - Task
+  - read_file
+  - exec_command
+  - spawn_agent
 ---
 
 <objective>
 Research how to implement a phase. Spawns gsd-phase-researcher agent with phase context.
 
-**Note:** This is a standalone research command. For most workflows, use `/gsd:plan-phase` which integrates research automatically.
+**Note:** This is a standalone research command. For most workflows, use `$gsd-plan-phase` which integrates research automatically.
 
 **Use this command when:**
 - You want to research without planning yet
@@ -20,7 +20,7 @@ Research how to implement a phase. Spawns gsd-phase-researcher agent with phase 
 
 **Orchestrator role:** Parse phase, validate against roadmap, check existing research, gather context, spawn researcher agent, present results.
 
-**Why subagent:** Research burns context fast (WebSearch, Context7 queries, source verification). Fresh 200k context for investigation. Main context stays lean for user interaction.
+**Why subagent:** Research burns context fast (web_search, Context7 queries, source verification). Fresh 200k context for investigation. Main context stays lean for user interaction.
 </objective>
 
 <context>
@@ -34,20 +34,20 @@ Normalize phase input in step 1 before any directory lookups.
 ## 0. Initialize Context
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init phase-op "$ARGUMENTS")
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init phase-op "$ARGUMENTS")
 ```
 
 Extract from init JSON: `phase_dir`, `phase_number`, `phase_name`, `phase_found`, `commit_docs`, `has_research`.
 
 Resolve researcher model:
 ```bash
-RESEARCHER_MODEL=$(node ~/.claude/get-shit-done/bin/gsd-tools.js resolve-model gsd-phase-researcher --raw)
+RESEARCHER_MODEL=$(node ~/.codex/get-shit-done/bin$gsd-tools.js resolve-model gsd-phase-researcher --raw)
 ```
 
 ## 1. Validate Phase
 
 ```bash
-PHASE_INFO=$(node ~/.claude/get-shit-done/bin/gsd-tools.js roadmap get-phase "${phase_number}")
+PHASE_INFO=$(node ~/.codex/get-shit-done/bin$gsd-tools.js roadmap get-phase "${phase_number}")
 ```
 
 **If `found` is false:** Error and exit. **If `found` is true:** Extract `phase_number`, `phase_name`, `goal` from JSON.
@@ -109,7 +109,7 @@ Mode: ecosystem
 </context>
 
 <downstream_consumer>
-Your RESEARCH.md will be loaded by `/gsd:plan-phase` which uses specific sections:
+Your RESEARCH.md will be loaded by `$gsd-plan-phase` which uses specific sections:
 - `## Standard Stack` → Plans use these libraries
 - `## Architecture Patterns` → Task structure follows these
 - `## Don't Hand-Roll` → Tasks NEVER build custom solutions for listed problems
@@ -134,9 +134,9 @@ Write to: .planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 ```
 
 ```
-Task(
-  prompt="First, read ~/.claude/agents/gsd-phase-researcher.md for your role and instructions.\n\n" + filled_prompt,
-  subagent_type="general-purpose",
+spawn_agent(
+  instructions="First, read ~/.codex/agents$gsd-phase-researcher.agent.md for your role and instructions.\n\n" + filled_prompt,
+  agent_name="default",
   model="{researcher_model}",
   description="Research Phase {phase}"
 )
@@ -168,9 +168,9 @@ Research file: @.planning/phases/${PHASE}-{slug}/${PHASE}-RESEARCH.md
 ```
 
 ```
-Task(
-  prompt="First, read ~/.claude/agents/gsd-phase-researcher.md for your role and instructions.\n\n" + continuation_prompt,
-  subagent_type="general-purpose",
+spawn_agent(
+  instructions="First, read ~/.codex/agents$gsd-phase-researcher.agent.md for your role and instructions.\n\n" + continuation_prompt,
+  agent_name="default",
   model="{researcher_model}",
   description="Continue research Phase {phase}"
 )

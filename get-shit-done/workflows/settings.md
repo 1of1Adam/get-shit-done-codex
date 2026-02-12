@@ -12,8 +12,8 @@ Read all files referenced by the invoking prompt's execution_context before star
 Ensure config exists and load current state:
 
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js config-ensure-section
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js state load)
+node ~/.codex/get-shit-done/bin$gsd-tools.js config-ensure-section
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js state load)
 ```
 
 Creates `.planning/config.json` with defaults if missing and loads current config values.
@@ -33,10 +33,10 @@ Parse current values (default to `true` if not present):
 </step>
 
 <step name="present_settings">
-Use AskUserQuestion with current values pre-selected:
+Use request_user_input with current values pre-selected:
 
 ```
-AskUserQuestion([
+request_user_input([
   {
     question: "Which model profile for agents?",
     header: "Model",
@@ -125,13 +125,13 @@ Display:
 | Execution Verifier   | {On/Off} |
 | Git Branching        | {None/Per Phase/Per Milestone} |
 
-These settings apply to future /gsd:plan-phase and /gsd:execute-phase runs.
+These settings apply to future $gsd-plan-phase and $gsd-execute-phase runs.
 
 Quick commands:
-- /gsd:set-profile <profile> — switch model profile
-- /gsd:plan-phase --research — force research
-- /gsd:plan-phase --skip-research — skip research
-- /gsd:plan-phase --skip-verify — skip plan check
+- $gsd-set-profile <profile> — switch model profile
+- $gsd-plan-phase --research — force research
+- $gsd-plan-phase --skip-research — skip research
+- $gsd-plan-phase --skip-verify — skip plan check
 ```
 </step>
 

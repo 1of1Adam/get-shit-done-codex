@@ -17,7 +17,7 @@ Output: .planning/codebase/ folder with 7 structured documents about the codebas
 Include enough detail to be useful as reference. Prioritize practical examples (especially code patterns) over arbitrary brevity.
 
 **Always include file paths:**
-Documents are reference material for Claude when planning/executing. Always include actual file paths formatted with backticks: `src/services/user.ts`.
+Documents are reference material for Codex when planning/executing. Always include actual file paths formatted with backticks: `src/services/user.ts`.
 </philosophy>
 
 <process>
@@ -26,7 +26,7 @@ Documents are reference material for Claude when planning/executing. Always incl
 Load codebase mapping context:
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init map-codebase)
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init map-codebase)
 ```
 
 Extract from init JSON: `mapper_model`, `commit_docs`, `codebase_dir`, `existing_maps`, `has_maps`, `codebase_dir_exists`.
@@ -84,17 +84,16 @@ Continue to spawn_agents.
 <step name="spawn_agents">
 Spawn 4 parallel gsd-codebase-mapper agents.
 
-Use Task tool with `subagent_type="gsd-codebase-mapper"`, `model="{mapper_model}"`, and `run_in_background=true` for parallel execution.
+Use spawn_agent tool with `agent_name="gsd-codebase-mapper"` and `model="{mapper_model}"` for parallel execution.
 
 **CRITICAL:** Use the dedicated `gsd-codebase-mapper` agent, NOT `Explore`. The mapper agent writes documents directly.
 
 **Agent 1: Tech Focus**
 
-Task tool parameters:
+spawn_agent tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
+agent_name="gsd-codebase-mapper"
 model: "{mapper_model}"
-run_in_background: true
 description: "Map codebase tech stack"
 ```
 
@@ -113,11 +112,10 @@ Explore thoroughly. Write documents directly using templates. Return confirmatio
 
 **Agent 2: Architecture Focus**
 
-Task tool parameters:
+spawn_agent tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
+agent_name="gsd-codebase-mapper"
 model: "{mapper_model}"
-run_in_background: true
 description: "Map codebase architecture"
 ```
 
@@ -136,11 +134,10 @@ Explore thoroughly. Write documents directly using templates. Return confirmatio
 
 **Agent 3: Quality Focus**
 
-Task tool parameters:
+spawn_agent tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
+agent_name="gsd-codebase-mapper"
 model: "{mapper_model}"
-run_in_background: true
 description: "Map codebase conventions"
 ```
 
@@ -159,11 +156,10 @@ Explore thoroughly. Write documents directly using templates. Return confirmatio
 
 **Agent 4: Concerns Focus**
 
-Task tool parameters:
+spawn_agent tool parameters:
 ```
-subagent_type: "gsd-codebase-mapper"
+agent_name="gsd-codebase-mapper"
 model: "{mapper_model}"
-run_in_background: true
 description: "Map codebase concerns"
 ```
 
@@ -246,7 +242,7 @@ This would expose credentials if committed.
 **Action required:**
 1. Review the flagged content above
 2. If these are real secrets, they must be removed before committing
-3. Consider adding sensitive files to Claude Code "Deny" permissions
+3. Consider adding sensitive files to Codex CLI "Deny" permissions
 
 Pausing before commit. Reply "safe to proceed" if the flagged content is not actually sensitive, or edit the files first.
 ```
@@ -262,7 +258,7 @@ Continue to commit_codebase_map.
 Commit the codebase map:
 
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs: map existing codebase" --files .planning/codebase/*.md
+node ~/.codex/get-shit-done/bin$gsd-tools.js commit "docs: map existing codebase" --files .planning/codebase/*.md
 ```
 
 Continue to offer_next.
@@ -297,14 +293,14 @@ Created .planning/codebase/:
 
 **Initialize project** — use codebase context for planning
 
-`/gsd:new-project`
+`$gsd-new-project`
 
 <sub>`/clear` first → fresh context window</sub>
 
 ---
 
 **Also available:**
-- Re-run mapping: `/gsd:map-codebase`
+- Re-run mapping: `$gsd-map-codebase`
 - Review specific file: `cat .planning/codebase/STACK.md`
 - Edit any document before proceeding
 
@@ -318,7 +314,7 @@ End workflow.
 
 <success_criteria>
 - .planning/codebase/ directory created
-- 4 parallel gsd-codebase-mapper agents spawned with run_in_background=true
+- 4 parallel gsd-codebase-mapper agents spawned
 - Agents write documents directly (orchestrator doesn't receive document contents)
 - Read agent output files to collect confirmations
 - All 7 codebase documents exist

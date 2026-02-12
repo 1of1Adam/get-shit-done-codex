@@ -1,5 +1,5 @@
 <purpose>
-Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into /gsd:plan-phase --gaps.
+Validate built features through conversational testing with persistent state. Creates UAT.md that tracks test progress, survives /clear, and feeds gaps into $gsd-plan-phase --gaps.
 
 User tests, Claude records. One test at a time. Plain text responses.
 </purpose>
@@ -15,7 +15,7 @@ No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. D
 </philosophy>
 
 <template>
-@~/.claude/get-shit-done/templates/UAT.md
+@~/.codex/get-shit-done/templates/UAT.md
 </template>
 
 <process>
@@ -24,7 +24,7 @@ No Pass/Fail buttons. No severity questions. Just: "Here's what should happen. D
 If $ARGUMENTS contains a phase number, load context:
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init verify-work "${PHASE_ARG}")
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init verify-work "${PHASE_ARG}")
 ```
 
 Parse JSON for: `planner_model`, `checker_model`, `commit_docs`, `phase_found`, `phase_dir`, `phase_number`, `phase_name`, `has_verification`.
@@ -69,7 +69,7 @@ If no, continue to `create_uat_file`.
 ```
 No active UAT sessions.
 
-Provide a phase number to start testing (e.g., /gsd:verify-work 4)
+Provide a phase number to start testing (e.g., $gsd-verify-work 4)
 ```
 
 **If no active sessions AND $ARGUMENTS provided:**
@@ -190,7 +190,7 @@ Display using checkpoint box format:
 ──────────────────────────────────────────────────────────────
 ```
 
-Wait for user response (plain text, no AskUserQuestion).
+Wait for user response (plain text, no request_user_input).
 </step>
 
 <step name="process_response">
@@ -292,7 +292,7 @@ Clear Current Test section:
 
 Commit the UAT file:
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "test({phase}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase}-UAT.md"
+node ~/.codex/get-shit-done/bin$gsd-tools.js commit "test({phase}): complete UAT - {passed} passed, {issues} issues" --files ".planning/phases/XX-name/{phase}-UAT.md"
 ```
 
 Present summary:
@@ -317,8 +317,8 @@ Present summary:
 ```
 All tests passed. Ready to continue.
 
-- `/gsd:plan-phase {next}` — Plan next phase
-- `/gsd:execute-phase {next}` — Execute next phase
+- `$gsd-plan-phase {next}` — Plan next phase
+- `$gsd-execute-phase {next}` — Execute next phase
 ```
 </step>
 
@@ -334,7 +334,7 @@ Spawning parallel debug agents to investigate each issue.
 ```
 
 - Load diagnose-issues workflow
-- Follow @~/.claude/get-shit-done/workflows/diagnose-issues.md
+- Follow @~/.codex/get-shit-done/workflows/diagnose-issues.md
 - Spawn parallel debug agents for each issue
 - Collect root causes
 - Update UAT.md with root causes
@@ -358,8 +358,8 @@ Display:
 Spawn gsd-planner in --gaps mode:
 
 ```
-Task(
-  prompt="""
+spawn_agent(
+  instructions="""
 <planning_context>
 
 **Phase:** {phase_number}
@@ -377,11 +377,11 @@ Task(
 </planning_context>
 
 <downstream_consumer>
-Output consumed by /gsd:execute-phase
+Output consumed by $gsd-execute-phase
 Plans must be executable prompts.
 </downstream_consumer>
 """,
-  subagent_type="gsd-planner",
+  agent_name="gsd-planner",
   model="{planner_model}",
   description="Plan gap fixes for Phase {phase}"
 )
@@ -409,8 +409,8 @@ Initialize: `iteration_count = 1`
 Spawn gsd-plan-checker:
 
 ```
-Task(
-  prompt="""
+spawn_agent(
+  instructions="""
 <verification_context>
 
 **Phase:** {phase_number}
@@ -427,7 +427,7 @@ Return one of:
 - ## ISSUES FOUND — structured issue list
 </expected_output>
 """,
-  subagent_type="gsd-plan-checker",
+  agent_name="gsd-plan-checker",
   model="{checker_model}",
   description="Verify Phase {phase} fix plans"
 )
@@ -448,8 +448,8 @@ Display: `Sending back to planner for revision... (iteration {N}/3)`
 Spawn gsd-planner with revision context:
 
 ```
-Task(
-  prompt="""
+spawn_agent(
+  instructions="""
 <revision_context>
 
 **Phase:** {phase_number}
@@ -468,7 +468,7 @@ Read existing PLAN.md files. Make targeted updates to address checker issues.
 Do NOT replan from scratch unless issues are fundamental.
 </instructions>
 """,
-  subagent_type="gsd-planner",
+  agent_name="gsd-planner",
   model="{planner_model}",
   description="Revise Phase {phase} plans"
 )
@@ -484,7 +484,7 @@ Display: `Max iterations reached. {N} issues remain.`
 Offer options:
 1. Force proceed (execute despite issues)
 2. Provide guidance (user gives direction, retry)
-3. Abandon (exit, user runs /gsd:plan-phase manually)
+3. Abandon (exit, user runs $gsd-plan-phase manually)
 
 Wait for user response.
 </step>
@@ -512,7 +512,7 @@ Plans verified and ready for execution.
 
 **Execute fixes** — run fix plans
 
-`/clear` then `/gsd:execute-phase {phase} --gaps-only`
+`/clear` then `$gsd-execute-phase {phase} --gaps-only`
 
 ───────────────────────────────────────────────────────────────
 ```
@@ -566,5 +566,5 @@ Default to **major** if unclear. User can correct if needed.
 - [ ] If issues: gsd-planner creates fix plans (gap_closure mode)
 - [ ] If issues: gsd-plan-checker verifies fix plans
 - [ ] If issues: revision loop until plans pass (max 3 iterations)
-- [ ] Ready for `/gsd:execute-phase --gaps-only` when complete
+- [ ] Ready for `$gsd-execute-phase --gaps-only` when complete
 </success_criteria>

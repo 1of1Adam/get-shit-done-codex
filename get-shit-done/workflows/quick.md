@@ -12,7 +12,7 @@ Read all files referenced by the invoking prompt's execution_context before star
 Prompt user interactively for the task description:
 
 ```
-AskUserQuestion(
+request_user_input(
   header: "Quick Task",
   question: "What do you want to do?",
   followUp: null
@@ -28,12 +28,12 @@ If empty, re-prompt: "Please provide a task description."
 **Step 2: Initialize**
 
 ```bash
-INIT=$(node ~/.claude/get-shit-done/bin/gsd-tools.js init quick "$DESCRIPTION")
+INIT=$(node ~/.codex/get-shit-done/bin$gsd-tools.js init quick "$DESCRIPTION")
 ```
 
 Parse JSON for: `planner_model`, `executor_model`, `commit_docs`, `next_num`, `slug`, `date`, `timestamp`, `quick_dir`, `task_dir`, `roadmap_exists`, `planning_exists`.
 
-**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `/gsd:new-project` first.
+**If `roadmap_exists` is false:** Error — Quick mode requires an active project with ROADMAP.md. Run `$gsd-new-project` first.
 
 Quick tasks can run mid-phase - validation only checks ROADMAP.md exists, not phase status.
 
@@ -71,8 +71,8 @@ Store `$QUICK_DIR` for use in orchestration.
 Spawn gsd-planner with quick mode context:
 
 ```
-Task(
-  prompt="
+spawn_agent(
+  instructions="
 <planning_context>
 
 **Mode:** quick
@@ -96,7 +96,7 @@ Write plan to: ${QUICK_DIR}/${next_num}-PLAN.md
 Return: ## PLANNING COMPLETE with plan path
 </output>
 ",
-  subagent_type="gsd-planner",
+  agent_name="gsd-planner",
   model="{planner_model}",
   description="Quick plan: ${DESCRIPTION}"
 )
@@ -116,8 +116,8 @@ If plan not found, error: "Planner failed to create ${next_num}-PLAN.md"
 Spawn gsd-executor with plan reference:
 
 ```
-Task(
-  prompt="
+spawn_agent(
+  instructions="
 Execute quick task ${next_num}.
 
 Plan: @${QUICK_DIR}/${next_num}-PLAN.md
@@ -130,7 +130,7 @@ Project state: @.planning/STATE.md
 - Do NOT update ROADMAP.md (quick tasks are separate from planned phases)
 </constraints>
 ",
-  subagent_type="gsd-executor",
+  agent_name="gsd-executor",
   model="{executor_model}",
   description="Execute: ${DESCRIPTION}"
 )
@@ -141,7 +141,7 @@ After executor returns:
 2. Extract commit hash from executor output
 3. Report completion status
 
-**Known Claude Code bug (classifyHandoffIfNeeded):** If executor reports "failed" with error `classifyHandoffIfNeeded is not defined`, this is a Claude Code runtime bug — not a real failure. Check if summary file exists and git log shows commits. If so, treat as successful.
+**Known Codex CLI bug (classifyHandoffIfNeeded):** If executor reports "failed" with error `classifyHandoffIfNeeded is not defined`, this is a Codex CLI runtime bug — not a real failure. Check if summary file exists and git log shows commits. If so, treat as successful.
 
 If summary not found, error: "Executor failed to create ${next_num}-SUMMARY.md"
 
@@ -182,7 +182,7 @@ Use `date` from init:
 Last activity: ${date} - Completed quick task ${next_num}: ${DESCRIPTION}
 ```
 
-Use Edit tool to make these changes atomically
+Use apply_patch tool to make these changes atomically
 
 ---
 
@@ -191,7 +191,7 @@ Use Edit tool to make these changes atomically
 Stage and commit quick task artifacts:
 
 ```bash
-node ~/.claude/get-shit-done/bin/gsd-tools.js commit "docs(quick-${next_num}): ${DESCRIPTION}" --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
+node ~/.codex/get-shit-done/bin$gsd-tools.js commit "docs(quick-${next_num}): ${DESCRIPTION}" --files ${QUICK_DIR}/${next_num}-PLAN.md ${QUICK_DIR}/${next_num}-SUMMARY.md .planning/STATE.md
 ```
 
 Get final commit hash:
@@ -212,7 +212,7 @@ Commit: ${commit_hash}
 
 ---
 
-Ready for next task: /gsd:quick
+Ready for next task: $gsd-quick
 ```
 
 </process>

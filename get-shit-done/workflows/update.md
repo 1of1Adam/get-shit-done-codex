@@ -13,11 +13,11 @@ Detect whether GSD is installed locally or globally by checking both locations:
 
 ```bash
 # Check local first (takes priority)
-if [ -f "./.claude/get-shit-done/VERSION" ]; then
-  cat "./.claude/get-shit-done/VERSION"
+if [ -f "./.codex/get-shit-done/VERSION" ]; then
+  cat "./.codex/get-shit-done/VERSION"
   echo "LOCAL"
-elif [ -f ~/.claude/get-shit-done/VERSION ]; then
-  cat ~/.claude/get-shit-done/VERSION
+elif [ -f ~/.codex/get-shit-done/VERSION ]; then
+  cat ~/.codex/get-shit-done/VERSION
   echo "GLOBAL"
 else
   echo "UNKNOWN"
@@ -121,7 +121,7 @@ Exit.
 - `get-shit-done/` will be wiped and replaced
 - `agents/gsd-*` files will be replaced
 
-(Paths are relative to your install location: `~/.claude/` for global, `./.claude/` for local)
+(Paths are relative to your install location: `~/.codex/` for global, `./.codex/` for local)
 
 Your custom files in other locations are preserved:
 - Custom commands not in `commands/gsd/` ✓
@@ -129,10 +129,10 @@ Your custom files in other locations are preserved:
 - Custom hooks ✓
 - Your CLAUDE.md files ✓
 
-If you've modified any GSD files directly, they'll be automatically backed up to `gsd-local-patches/` and can be reapplied with `/gsd:reapply-patches` after the update.
+If you've modified any GSD files directly, they'll be automatically backed up to `gsd-local-patches/` and can be reapplied with `$gsd-reapply-patches` after the update.
 ```
 
-Use AskUserQuestion:
+Use request_user_input:
 - Question: "Proceed with update?"
 - Options:
   - "Yes, update now"
@@ -160,12 +160,12 @@ Clear the update cache so statusline indicator disappears:
 
 **If LOCAL install:**
 ```bash
-rm -f ./.claude/cache/gsd-update-check.json
+rm -f ./.codex/cache$gsd-update-check.json
 ```
 
 **If GLOBAL install:**
 ```bash
-rm -f ~/.claude/cache/gsd-update-check.json
+rm -f ~/.codex/cache$gsd-update-check.json
 ```
 </step>
 
@@ -177,7 +177,7 @@ Format completion message (changelog was already shown in confirmation step):
 ║  GSD Updated: v1.5.10 → v1.5.15                           ║
 ╚═══════════════════════════════════════════════════════════╝
 
-⚠️  Restart Claude Code to pick up the new commands.
+⚠️  Restart Codex CLI to pick up the new commands.
 
 [View full changelog](https://github.com/glittercowboy/get-shit-done/blob/main/CHANGELOG.md)
 ```
@@ -193,7 +193,7 @@ Check for gsd-local-patches/backup-meta.json in the config directory.
 
 ```
 Local patches were backed up before the update.
-Run /gsd:reapply-patches to merge your modifications into the new version.
+Run $gsd-reapply-patches to merge your modifications into the new version.
 ```
 
 **If no patches:** Continue normally.

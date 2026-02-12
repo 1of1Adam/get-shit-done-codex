@@ -3,12 +3,12 @@ name: gsd:discuss-phase
 description: Gather phase context through adaptive questioning before planning
 argument-hint: "<phase>"
 allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Glob
-  - Grep
-  - AskUserQuestion
+  - read_file
+  - apply_patch
+  - exec_command
+  - list_dir
+  - grep_files
+  - request_user_input
 ---
 
 <objective>
@@ -24,8 +24,8 @@ Extract implementation decisions that downstream agents need — researcher and 
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/discuss-phase.md
-@~/.claude/get-shit-done/templates/context.md
+@~/.codex/get-shit-done/workflows/discuss-phase.md
+@~/.codex/get-shit-done/templates/context.md
 </execution_context>
 
 <context>

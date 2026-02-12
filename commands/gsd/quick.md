@@ -3,14 +3,13 @@ name: gsd:quick
 description: Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents
 argument-hint: ""
 allowed-tools:
-  - Read
-  - Write
-  - Edit
-  - Glob
-  - Grep
-  - Bash
-  - Task
-  - AskUserQuestion
+  - read_file
+  - apply_patch
+  - list_dir
+  - grep_files
+  - exec_command
+  - spawn_agent
+  - request_user_input
 ---
 <objective>
 Execute small, ad-hoc tasks with GSD guarantees (atomic commits, STATE.md tracking) while skipping optional agents (research, plan-checker, verifier).
@@ -25,7 +24,7 @@ Use when: You know exactly what to do and the task is small enough to not need r
 </objective>
 
 <execution_context>
-@~/.claude/get-shit-done/workflows/quick.md
+@~/.codex/get-shit-done/workflows/quick.md
 </execution_context>
 
 <context>
@@ -33,6 +32,6 @@ Use when: You know exactly what to do and the task is small enough to not need r
 </context>
 
 <process>
-Execute the quick workflow from @~/.claude/get-shit-done/workflows/quick.md end-to-end.
+Execute the quick workflow from @~/.codex/get-shit-done/workflows/quick.md end-to-end.
 Preserve all workflow gates (validation, task description, planning, execution, state updates, commits).
 </process>
