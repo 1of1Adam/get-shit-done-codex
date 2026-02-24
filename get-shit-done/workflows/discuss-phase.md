@@ -135,13 +135,23 @@ ls ${phase_dir}/*-CONTEXT.md 2>/dev/null
 ```
 
 **If exists:**
-Use request_user_input:
-- header: "Existing context"
-- question: "Phase [X] already has context. What do you want to do?"
-- options:
-  - "Update it" — Review and revise existing context
-  - "View it" — Show me what's there
-  - "Skip" — Use existing context as-is
+Use:
+```text
+request_user_input({
+  questions: [
+    {
+      id: "existing_context_action",
+      header: "Context",
+      question: "Phase [X] already has context. What do you want to do?",
+      options: [
+        { label: "Update it (Recommended)", description: "Review and revise existing context" },
+        { label: "View it", description: "Show current CONTEXT.md before deciding" },
+        { label: "Skip", description: "Use existing context as-is and exit" }
+      ]
+    }
+  ]
+})
+```
 
 If "Update": Load existing, continue to analyze_phase
 If "View": Display CONTEXT.md, then offer update/skip
@@ -188,11 +198,25 @@ We'll clarify HOW to implement this.
 ```
 
 **Then use request_user_input (multiSelect: true):**
-- header: "Discuss"
-- question: "Which areas do you want to discuss for [phase name]?"
-- options: Generate 3-4 phase-specific gray areas, each formatted as:
-  - "[Specific area]" (label) — concrete, not generic
-  - [1-2 questions this covers] (description)
+```text
+request_user_input({
+  questions: [
+    {
+      id: "discussion_area_selection",
+      header: "Discuss",
+      question: "Which areas do you want to discuss for [phase name]?",
+      multiSelect: true,
+      options: [
+        { label: "[Specific area A] (Recommended)", description: "[1-2 concrete questions this area covers]" },
+        { label: "[Specific area B]", description: "[1-2 concrete questions this area covers]" },
+        { label: "[Specific area C]", description: "[1-2 concrete questions this area covers]" }
+      ]
+    }
+  ]
+})
+```
+
+Generate phase-specific option labels/descriptions; keep them concrete, not generic.
 
 **Do NOT include a "skip" or "you decide" option.** User ran this command to discuss — give them real choices.
 
@@ -240,23 +264,63 @@ Ask 4 questions per area before offering to continue or move on. Each answer oft
    ```
 
 2. **Ask 4 questions using request_user_input:**
-   - header: "[Area]"
-   - question: Specific decision for this area
-   - options: 2-3 concrete choices (request_user_input adds "Other" automatically)
-   - Include "You decide" as an option when reasonable — captures Claude discretion
+   - Template:
+   ```text
+   request_user_input({
+     questions: [
+       {
+         id: "[area]_decision_[n]",
+         header: "[Area]",
+         question: "[Specific decision for this area]",
+         options: [
+           { label: "[Choice A] (Recommended)", description: "[why this is usually the best default]" },
+           { label: "[Choice B]", description: "[tradeoff]" },
+           { label: "[Choice C]", description: "[tradeoff]" }
+         ]
+       }
+     ]
+   })
+   ```
+   - Include "You decide" as an option when reasonable by replacing one option label
 
 3. **After 4 questions, check:**
-   - header: "[Area]"
-   - question: "More questions about [area], or move to next?"
-   - options: "More questions" / "Next area"
+   - Ask:
+   ```text
+   request_user_input({
+     questions: [
+       {
+         id: "[area]_continue_or_next",
+         header: "[Area]",
+         question: "More questions about [area], or move to next?",
+         options: [
+           { label: "More questions", description: "Keep discussing this area for another 4-question round" },
+           { label: "Next area (Recommended)", description: "Move to the next selected area" }
+         ]
+       }
+     ]
+   })
+   ```
 
    If "More questions" → ask 4 more, then check again
    If "Next area" → proceed to next selected area
 
 4. **After all areas complete:**
-   - header: "Done"
-   - question: "That covers [list areas]. Ready to create context?"
-   - options: "Create context" / "Revisit an area"
+   - Ask:
+   ```text
+   request_user_input({
+     questions: [
+       {
+         id: "discussion_completion_gate",
+         header: "Done",
+         question: "That covers [list areas]. Ready to create context?",
+         options: [
+           { label: "Create context (Recommended)", description: "Write CONTEXT.md with current decisions" },
+           { label: "Revisit an area", description: "Return to one area for deeper discussion" }
+         ]
+       }
+     ]
+   })
+   ```
 
 **Question design:**
 - Options should be concrete, not abstract ("Cards" not "Option A")

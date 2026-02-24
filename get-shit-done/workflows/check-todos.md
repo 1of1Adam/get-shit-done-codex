@@ -102,24 +102,46 @@ If `.planning/ROADMAP.md` exists:
 **If todo maps to a roadmap phase:**
 
 Use request_user_input:
-- header: "Action"
-- question: "This todo relates to Phase [N]: [name]. What would you like to do?"
-- options:
-  - "Work on it now" — move to done, start working
-  - "Add to phase plan" — include when planning Phase [N]
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+```text
+request_user_input({
+  questions: [
+    {
+      id: "todo_action_phase_match",
+      header: "Action",
+      question: "This todo relates to Phase [N]: [name]. What would you like to do?",
+      options: [
+        { label: "Work on it now (Recommended)", description: "Move to done and start execution" },
+        { label: "Add to phase plan", description: "Include it when planning Phase [N]" },
+        { label: "Brainstorm approach", description: "Discuss options before choosing execution" }
+      ]
+    }
+  ]
+})
+```
+
+If user wants to return to list without action, they can use Other with "Put it back".
 
 **If no roadmap match:**
 
 Use request_user_input:
-- header: "Action"
-- question: "What would you like to do with this todo?"
-- options:
-  - "Work on it now" — move to done, start working
-  - "Create a phase" — $gsd-add-phase with this scope
-  - "Brainstorm approach" — think through before deciding
-  - "Put it back" — return to list
+```text
+request_user_input({
+  questions: [
+    {
+      id: "todo_action_no_match",
+      header: "Action",
+      question: "What would you like to do with this todo?",
+      options: [
+        { label: "Work on it now (Recommended)", description: "Move to done and start execution" },
+        { label: "Create a phase", description: "Use $gsd-add-phase with this scope" },
+        { label: "Brainstorm approach", description: "Discuss approach before deciding execution" }
+      ]
+    }
+  ]
+})
+```
+
+If user wants no action, they can use Other with "Put it back".
 </step>
 
 <step name="execute_action">

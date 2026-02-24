@@ -12,11 +12,20 @@ Read all files referenced by the invoking prompt's execution_context before star
 Prompt user interactively for the task description:
 
 ```
-request_user_input(
-  header: "Quick Task",
-  question: "What do you want to do?",
-  followUp: null
-)
+request_user_input({
+  questions: [
+    {
+      id: "quick_task_description",
+      header: "Quick Task",
+      question: "What do you want to do?",
+      options: [
+        { label: "Custom task (Recommended)", description: "Use Other to type the exact task details" },
+        { label: "Bug fix", description: "Fix broken behavior or regressions" },
+        { label: "Small feature", description: "Implement a scoped improvement" }
+      ]
+    }
+  ]
+})
 ```
 
 Store response as `$DESCRIPTION`.

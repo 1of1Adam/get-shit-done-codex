@@ -214,14 +214,23 @@ Write `.planning/phases/XX-name/DISCOVERY.md`:
 After creating DISCOVERY.md, check confidence level.
 
 If confidence is LOW:
-Use request_user_input:
-
-- header: "Low Confidence"
-- question: "Discovery confidence is LOW: [reason]. How would you like to proceed?"
-- options:
-  - "Dig deeper" - Do more research before planning
-  - "Proceed anyway" - Accept uncertainty, plan with caveats
-  - "Pause" - I need to think about this
+Use:
+```text
+request_user_input({
+  questions: [
+    {
+      id: "low_confidence_decision",
+      header: "Low Conf.",
+      question: "Discovery confidence is LOW: [reason]. How would you like to proceed?",
+      options: [
+        { label: "Dig deeper (Recommended)", description: "Do more research before planning" },
+        { label: "Proceed anyway", description: "Accept uncertainty and continue with caveats" },
+        { label: "Pause", description: "Stop here and revisit later" }
+      ]
+    }
+  ]
+})
+```
 
 If confidence is MEDIUM:
 Inline: "Discovery complete (medium confidence). [brief reason]. Proceed to planning?"

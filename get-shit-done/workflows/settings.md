@@ -36,8 +36,10 @@ Parse current values (default to `true` if not present):
 Use request_user_input with current values pre-selected:
 
 ```
-request_user_input([
+request_user_input({
+  questions: [
   {
+    id: "model_profile",
     question: "Which model profile for agents?",
     header: "Model",
     multiSelect: false,
@@ -48,6 +50,7 @@ request_user_input([
     ]
   },
   {
+    id: "workflow_research",
     question: "Spawn Plan Researcher? (researches domain before planning)",
     header: "Research",
     multiSelect: false,
@@ -57,6 +60,7 @@ request_user_input([
     ]
   },
   {
+    id: "workflow_plan_check",
     question: "Spawn Plan Checker? (verifies plans before execution)",
     header: "Plan Check",
     multiSelect: false,
@@ -66,6 +70,7 @@ request_user_input([
     ]
   },
   {
+    id: "workflow_verifier",
     question: "Spawn Execution Verifier? (verifies phase completion)",
     header: "Verifier",
     multiSelect: false,
@@ -75,6 +80,7 @@ request_user_input([
     ]
   },
   {
+    id: "git_branching_strategy",
     question: "Git branching strategy?",
     header: "Branching",
     multiSelect: false,
@@ -84,7 +90,8 @@ request_user_input([
       { label: "Per Milestone", description: "Create branch for entire milestone (gsd/{version}-{name})" }
     ]
   }
-])
+  ]
+})
 ```
 </step>
 

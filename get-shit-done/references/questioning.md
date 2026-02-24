@@ -66,9 +66,15 @@ Use these as inspiration, not a checklist. Pick what's relevant to the thread.
 
 </question_types>
 
-<using_askuserquestion>
+<using_request_user_input>
 
-Use request_user_input to help users think by presenting concrete options to react to.
+Use `request_user_input({ questions: [...] })` to help users think by presenting concrete options to react to.
+
+Required shape for each question object:
+- `id`: stable snake_case identifier (for downstream mapping)
+- `header`: short label (12 chars or fewer)
+- `question`: one clear sentence
+- `options`: 2-3 choices, each as `{ label, description }`
 
 **Good options:**
 - Interpretations of what they might mean
@@ -83,18 +89,44 @@ Use request_user_input to help users think by presenting concrete options to rea
 **Example — vague answer:**
 User says "it should be fast"
 
-- header: "Fast"
-- question: "Fast how?"
-- options: ["Sub-second response", "Handles large datasets", "Quick to build", "Let me explain"]
+```text
+request_user_input({
+  questions: [
+    {
+      id: "speed_priority",
+      header: "Fast",
+      question: "Fast how?",
+      options: [
+        { label: "Sub-second response (Recommended)", description: "Optimize user-facing latency first" },
+        { label: "Handles large datasets", description: "Prioritize throughput and scale" },
+        { label: "Quick to build", description: "Ship a simple solution faster" }
+      ]
+    }
+  ]
+})
+```
 
 **Example — following a thread:**
 User mentions "frustrated with current tools"
 
-- header: "Frustration"
-- question: "What specifically frustrates you?"
-- options: ["Too many clicks", "Missing features", "Unreliable", "Let me explain"]
+```text
+request_user_input({
+  questions: [
+    {
+      id: "frustration_source",
+      header: "Frustration",
+      question: "What specifically frustrates you?",
+      options: [
+        { label: "Too many clicks (Recommended)", description: "Current flow has too much friction" },
+        { label: "Missing features", description: "Critical capability gaps block progress" },
+        { label: "Unreliable", description: "Frequent failures reduce trust in the tool" }
+      ]
+    }
+  ]
+})
+```
 
-</using_askuserquestion>
+</using_request_user_input>
 
 <context_checklist>
 
@@ -111,13 +143,23 @@ Four things. If they volunteer more, capture it.
 
 <decision_gate>
 
-When you could write a clear PROJECT.md, offer to proceed:
+When you could write a clear PROJECT.md, offer to proceed with a structured `request_user_input` gate:
 
-- header: "Ready?"
-- question: "I think I understand what you're after. Ready to create PROJECT.md?"
-- options:
-  - "Create PROJECT.md" — Let's move forward
-  - "Keep exploring" — I want to share more / ask me more
+```text
+request_user_input({
+  questions: [
+    {
+      id: "project_ready_gate",
+      header: "Ready?",
+      question: "I think I understand what you're after. Ready to create PROJECT.md?",
+      options: [
+        { label: "Create PROJECT.md (Recommended)", description: "Proceed with synthesis now" },
+        { label: "Keep exploring", description: "Continue the conversation and clarify further" }
+      ]
+    }
+  ]
+})
+```
 
 If "Keep exploring" — ask what they want to add or identify gaps and probe naturally.
 

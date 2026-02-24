@@ -84,9 +84,21 @@ Extract from init JSON: `researcher_model`, `synthesizer_model`, `roadmapper_mod
 
 ## 8. Research Decision
 
-request_user_input: "Research the domain ecosystem for new features before defining requirements?"
-- "Research first (Recommended)" — Discover patterns, features, architecture for NEW capabilities
-- "Skip research" — Go straight to requirements
+```text
+request_user_input({
+  questions: [
+    {
+      id: "milestone_research_decision",
+      header: "Research",
+      question: "Research the domain ecosystem for new features before defining requirements?",
+      options: [
+        { label: "Research first (Recommended)", description: "Discover patterns and architecture for new capabilities" },
+        { label: "Skip research", description: "Go straight to requirements definition" }
+      ]
+    }
+  ]
+})
+```
 
 **Persist choice to config** (so future `$gsd-plan-phase` honors it):
 

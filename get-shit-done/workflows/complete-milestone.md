@@ -469,7 +469,26 @@ Options:
 3. **Keep branches** — Leave for manual handling
 ```
 
-request_user_input with options: Squash merge (Recommended), Merge with history, Delete without merging, Keep branches.
+Use:
+
+```text
+request_user_input({
+  questions: [
+    {
+      id: "branch_cleanup_strategy",
+      header: "Branches",
+      question: "How should existing milestone branches be handled?",
+      options: [
+        { label: "Squash merge (Recommended)", description: "Merge changes into main with clean, condensed commits" },
+        { label: "Merge with history", description: "Preserve full branch commit history" },
+        { label: "Delete without merging", description: "Remove branches that are already merged or no longer needed" }
+      ]
+    }
+  ]
+})
+```
+
+If user chooses "Keep branches", they can use Other with "keep branches" to leave them unchanged.
 
 **Squash merge:**
 

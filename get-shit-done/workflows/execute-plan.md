@@ -130,7 +130,24 @@ This IS the execution instructions. Follow exactly. If plan references CONTEXT.m
 ```bash
 ls .planning/phases/*/SUMMARY.md 2>/dev/null | sort -r | head -2 | tail -1
 ```
-If previous SUMMARY has unresolved "Issues Encountered" or "Next Phase Readiness" blockers: request_user_input(header="Previous Issues", options: "Proceed anyway" | "Address first" | "Review previous").
+If previous SUMMARY has unresolved "Issues Encountered" or "Next Phase Readiness" blockers, ask:
+
+```text
+request_user_input({
+  questions: [
+    {
+      id: "previous_issues_resolution",
+      header: "Prev Issues",
+      question: "The previous phase reported unresolved issues. How should we proceed?",
+      options: [
+        { label: "Proceed anyway", description: "Continue current plan despite unresolved issues" },
+        { label: "Address first (Recommended)", description: "Resolve blockers before executing this plan" },
+        { label: "Review previous", description: "Open the previous summary before deciding" }
+      ]
+    }
+  ]
+})
+```
 </step>
 
 <step name="execute">

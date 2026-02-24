@@ -69,13 +69,23 @@ If potential duplicate found:
 1. Read the existing todo
 2. Compare scope
 
-If overlapping, use request_user_input:
-- header: "Duplicate?"
-- question: "Similar todo exists: [title]. What would you like to do?"
-- options:
-  - "Skip" — keep existing todo
-  - "Replace" — update existing with new context
-  - "Add anyway" — create as separate todo
+If overlapping, use:
+```text
+request_user_input({
+  questions: [
+    {
+      id: "duplicate_todo_resolution",
+      header: "Duplicate?",
+      question: "Similar todo exists: [title]. What would you like to do?",
+      options: [
+        { label: "Skip (Recommended)", description: "Keep the existing todo and do not add another" },
+        { label: "Replace", description: "Update the existing todo with this new context" },
+        { label: "Add anyway", description: "Create a separate todo even if scope overlaps" }
+      ]
+    }
+  ]
+})
+```
 </step>
 
 <step name="create_file">

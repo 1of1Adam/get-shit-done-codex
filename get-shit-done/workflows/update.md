@@ -133,10 +133,21 @@ If you've modified any GSD files directly, they'll be automatically backed up to
 ```
 
 Use request_user_input:
-- Question: "Proceed with update?"
-- Options:
-  - "Yes, update now"
-  - "No, cancel"
+```text
+request_user_input({
+  questions: [
+    {
+      id: "confirm_gsd_update",
+      header: "Update",
+      question: "Proceed with update?",
+      options: [
+        { label: "Yes, update now (Recommended)", description: "Install the latest GSD release now" },
+        { label: "No, cancel", description: "Abort update and keep current version" }
+      ]
+    }
+  ]
+})
+```
 
 **If user cancels:** Exit.
 </step>

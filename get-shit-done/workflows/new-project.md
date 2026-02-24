@@ -59,11 +59,21 @@ git init
 **If `needs_codebase_map` is true** (from init — existing code detected but no codebase map):
 
 Use request_user_input:
-- header: "Existing Code"
-- question: "I detected existing code in this directory. Would you like to map the codebase first?"
-- options:
-  - "Map codebase first" — Run $gsd-map-codebase to understand existing architecture (Recommended)
-  - "Skip mapping" — Proceed with project initialization
+```text
+request_user_input({
+  questions: [
+    {
+      id: "brownfield_codebase_mapping",
+      header: "Codebase",
+      question: "I detected existing code in this directory. Would you like to map the codebase first?",
+      options: [
+        { label: "Map codebase first (Recommended)", description: "Run $gsd-map-codebase before initialization" },
+        { label: "Skip mapping", description: "Proceed directly with project initialization" }
+      ]
+    }
+  ]
+})
+```
 
 **If "Map codebase first":**
 ```
@@ -117,13 +127,23 @@ As you go, mentally check the context checklist from `questioning.md`. If gaps r
 
 **Decision gate:**
 
-When you could write a clear PROJECT.md, use request_user_input:
+When you could write a clear PROJECT.md, use:
 
-- header: "Ready?"
-- question: "I think I understand what you're after. Ready to create PROJECT.md?"
-- options:
-  - "Create PROJECT.md" — Let's move forward
-  - "Keep exploring" — I want to share more / ask me more
+```text
+request_user_input({
+  questions: [
+    {
+      id: "project_ready_gate",
+      header: "Ready?",
+      question: "I think I understand what you're after. Ready to create PROJECT.md?",
+      options: [
+        { label: "Create PROJECT.md (Recommended)", description: "Proceed with synthesis and commit" },
+        { label: "Keep exploring", description: "Continue questioning to gather more detail" }
+      ]
+    }
+  ]
+})
+```
 
 If "Keep exploring" — ask what they want to add, or identify gaps and probe naturally.
 
@@ -220,8 +240,10 @@ node ~/.codex/get-shit-done/bin$gsd-tools.js commit "docs: initialize project" -
 **Round 1 — Core workflow settings (4 questions):**
 
 ```
-questions: [
+request_user_input({
+  questions: [
   {
+    id: "mode",
     header: "Mode",
     question: "How do you want to work?",
     multiSelect: false,
@@ -231,6 +253,7 @@ questions: [
     ]
   },
   {
+    id: "depth",
     header: "Depth",
     question: "How thorough should planning be?",
     multiSelect: false,
@@ -241,6 +264,7 @@ questions: [
     ]
   },
   {
+    id: "parallelization",
     header: "Execution",
     question: "Run plans in parallel?",
     multiSelect: false,
@@ -250,6 +274,7 @@ questions: [
     ]
   },
   {
+    id: "commit_docs",
     header: "Git Tracking",
     question: "Commit planning docs to git?",
     multiSelect: false,
@@ -258,7 +283,8 @@ questions: [
       { label: "No", description: "Keep .planning/ local-only (add to .gitignore)" }
     ]
   }
-]
+  ]
+})
 ```
 
 **Round 2 — Workflow agents:**
@@ -274,8 +300,10 @@ These spawn additional agents during planning/execution. They add tokens and tim
 All recommended for important projects. Skip for quick experiments.
 
 ```
-questions: [
+request_user_input({
+  questions: [
   {
+    id: "workflow_research",
     header: "Research",
     question: "Research before planning each phase? (adds tokens/time)",
     multiSelect: false,
@@ -285,6 +313,7 @@ questions: [
     ]
   },
   {
+    id: "workflow_plan_check",
     header: "Plan Check",
     question: "Verify plans will achieve their goals? (adds tokens/time)",
     multiSelect: false,
@@ -294,6 +323,7 @@ questions: [
     ]
   },
   {
+    id: "workflow_verifier",
     header: "Verifier",
     question: "Verify work satisfies requirements after each phase? (adds tokens/time)",
     multiSelect: false,
@@ -303,6 +333,7 @@ questions: [
     ]
   },
   {
+    id: "model_profile",
     header: "Model Profile",
     question: "Which AI models for planning agents?",
     multiSelect: false,
@@ -312,7 +343,8 @@ questions: [
       { label: "Budget", description: "Haiku where possible — fastest, lowest cost" }
     ]
   }
-]
+  ]
+})
 ```
 
 Create `.planning/config.json` with all settings:
@@ -356,11 +388,21 @@ Use models from init: `researcher_model`, `synthesizer_model`, `roadmapper_model
 **If auto mode:** Default to "Research first" without asking.
 
 Use request_user_input:
-- header: "Research"
-- question: "Research the domain ecosystem before defining requirements?"
-- options:
-  - "Research first (Recommended)" — Discover standard stacks, expected features, architecture patterns
-  - "Skip research" — I know this domain well, go straight to requirements
+```text
+request_user_input({
+  questions: [
+    {
+      id: "requirements_research_decision",
+      header: "Research",
+      question: "Research the domain ecosystem before defining requirements?",
+      options: [
+        { label: "Research first (Recommended)", description: "Discover stacks, features, and architecture patterns" },
+        { label: "Skip research", description: "Go straight to requirements drafting" }
+      ]
+    }
+  ]
+})
+```
 
 **If "Research first":**
 
@@ -662,15 +704,25 @@ For each capability mentioned:
 **Scope each category:**
 
 For each category, use request_user_input:
+```text
+request_user_input({
+  questions: [
+    {
+      id: "[category]_v1_scope",
+      header: "[Category]",
+      question: "Which [category] features are in v1?",
+      multiSelect: true,
+      options: [
+        { label: "[Feature 1] (Recommended)", description: "[brief description]" },
+        { label: "[Feature 2]", description: "[brief description]" },
+        { label: "[Feature 3]", description: "[brief description]" }
+      ]
+    }
+  ]
+})
+```
 
-- header: "[Category name]"
-- question: "Which [category] features are in v1?"
-- multiSelect: true
-- options:
-  - "[Feature 1]" — [brief description]
-  - "[Feature 2]" — [brief description]
-  - "[Feature 3]" — [brief description]
-  - "None for v1" — Defer entire category
+If "None for v1" is the right answer, user can use Other with "none for v1".
 
 Track responses:
 - Selected features → v1 requirements
@@ -680,11 +732,21 @@ Track responses:
 **Identify gaps:**
 
 Use request_user_input:
-- header: "Additions"
-- question: "Any requirements research missed? (Features specific to your vision)"
-- options:
-  - "No, research covered it" — Proceed
-  - "Yes, let me add some" — Capture additions
+```text
+request_user_input({
+  questions: [
+    {
+      id: "requirements_gap_check",
+      header: "Additions",
+      question: "Any requirements research missed? (Features specific to your vision)",
+      options: [
+        { label: "No, research covered it (Recommended)", description: "Proceed to finalize requirements" },
+        { label: "Yes, let me add some", description: "Capture additional requirements now" }
+      ]
+    }
+  ]
+})
+```
 
 **Validate core value:**
 
@@ -840,12 +902,22 @@ Success criteria:
 **CRITICAL: Ask for approval before committing (interactive mode only):**
 
 Use request_user_input:
-- header: "Roadmap"
-- question: "Does this roadmap structure work for you?"
-- options:
-  - "Approve" — Commit and continue
-  - "Adjust phases" — Tell me what to change
-  - "Review full file" — Show raw ROADMAP.md
+```text
+request_user_input({
+  questions: [
+    {
+      id: "roadmap_approval",
+      header: "Roadmap",
+      question: "Does this roadmap structure work for you?",
+      options: [
+        { label: "Approve (Recommended)", description: "Commit roadmap and continue" },
+        { label: "Adjust phases", description: "Provide changes for a revised roadmap" },
+        { label: "Review full file", description: "Show raw ROADMAP.md before deciding" }
+      ]
+    }
+  ]
+})
+```
 
 **If "Approve":** Continue to commit.
 
