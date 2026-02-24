@@ -33,6 +33,16 @@ Command files and workflows include `@path` references. These are mandatory cont
 - "spawn_agent" -> use `spawn_agent` to create sub-agents, `send_input` to message them, `wait` to collect results
 - "web_search" -> use the `web_search` tool
 
+## User questioning policy (mandatory)
+- When asking users questions, prefer `request_user_input` over plain-text prompts.
+- All user-facing question text must be Chinese:
+  - `header`
+  - `question`
+  - `options[].label`
+  - `options[].description`
+- Do not show English-only question prompts to users.
+- If free-form details are required, still open with a Chinese `request_user_input` question first, then collect details through `Other`.
+
 ## Output expectations
 Follow the XML or markdown formats defined in the command and template files exactly. These files are operational prompts, not documentation.
 
