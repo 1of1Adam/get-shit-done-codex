@@ -97,9 +97,23 @@ Exit command.
 
 **Open the conversation:**
 
-Ask inline (freeform, NOT request_user_input):
-
-"What do you want to build?"
+Use:
+```text
+request_user_input({
+  questions: [
+    {
+      id: "project_idea_opening",
+      header: "Project",
+      question: "What do you want to build? Start with who it's for, what problem it solves, and your ideal usage flow.",
+      options: [
+        { label: "I'll describe it in my own words (Recommended)", description: "Use Other to enter a freeform idea description" },
+        { label: "Start with target users", description: "Begin by clarifying who this is for" },
+        { label: "Start with the core problem", description: "Begin by clarifying what pain point this solves" }
+      ]
+    }
+  ]
+})
+```
 
 Wait for their response. This gives you the context needed to ask intelligent follow-up questions.
 
